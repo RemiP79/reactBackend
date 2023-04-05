@@ -15,6 +15,7 @@ mongoose.connect(process.env.DBLINK, {
 
 
 const app = express();
+app.use(express.json()); //ajout RP car oubli ?
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -24,8 +25,9 @@ app.use((req, res, next) => {
 });
 
 app.use(bodyParser.json());
-app.use('./api/books', bookRoutes);
+app.use('/images', express.static(path.join(__dirname, 'images'))); // mise avant pour indiquer à Express qu'il faut gérer la ressource images de manière statique 
+app.use('/api/books', bookRoutes);
 app.use('/api/auth', userRoutes);
-app.use('/images', express.static(path.join(__dirname, 'images')));
+
 
 module.exports = app;
