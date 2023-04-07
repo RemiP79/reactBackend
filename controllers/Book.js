@@ -91,21 +91,18 @@ exports.ratingBook =(req, res, next) => {
         ratings.grade.push(req.rating);
         averageRating = (averageRating+(req.rating))/ratings.grade.length;
 
-    Book.findOne({_id: req.params.id})   
-       
+    Book.findOne({_id: req.params.id})       
     .then((book) => {
         if (book.userId != req.auth.userId) {
             res.status(401).json({ message : 'Not authorized'});
         } else {
-        Book.updateOne({_id: req.params.id}, {...modifRate, _id: req.params.id})                                     
-                                                    
+        Book.updateOne({_id: req.params.id}, {...modifRate, _id: req.params.id})
             .then(() => {res.status(200).json({message : 'Note prise en compte'});
             })
             .catch((error) => {res.status(401).json({ error });
             });
         }
     })      
-
     .catch((error) => {
         res.status(400).json({ error });
     });
@@ -115,16 +112,13 @@ exports.bestRating=(req, res,next)=>{
     Book.find()     
     .then((books) =>  {        
         const array=[];
-        array.map(books); 
-        array.sort(books.averageRating);            
-     res.status(200).json([array.filter([0],[1],[2])]);
+        const arrayMap = array.map(books); 
+        arrayMap.sort(books.averageRating);            
+     res.status(200).json([arrayMap.filter([0],[1],[2])]);
     })     
     .catch((error) => {res.status(400).json({ error });
     });
 };
     
-    // Book.find()
-    // .then((averageRating) => {res.status(200).json({averageRating});})
-    // .catch((error) => {res.status(400).json({ error });
-    // });
+   
 
