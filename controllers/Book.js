@@ -35,7 +35,7 @@ exports.modifyBook = (req, res, next) => {
    // delete bookObject._userId;
     Book.findOne({_id: req.params.id})
         .then((book) => {
-            if (book.userId != req.auth.userId) {
+            if (book.userId === !req.auth.userId) {
                 res.status(401).json({ message : 'Not authorized'});
             } else {
                 Book.updateOne({_id: req.params.id}, { ...bookObject, _id: req.params.id})
@@ -55,7 +55,7 @@ exports.deleteBook = (req,res,next)=>{
     
        .then(book => {
         console.log(book);  
-        if (book.userId != req.auth.userId) {
+        if (book.userId === !req.auth.userId) {
                res.status(401).json({message: 'Not authorized'});
            } else {
                const filename = book.imageUrl.split('/images/')[1];
@@ -85,40 +85,45 @@ Book.find()
 
 //////////////////////////////////////
 
-exports.ratingBook =(req, res, next) => { 
-    const modifRate =         
-        ratings.userId.push(req.userId);
-        ratings.grade.push(req.rating);
-        averageRating = (averageRating+(req.rating))/ratings.grade.length;
-
+exports.ratingBook =(req, res, next) => {         
     Book.findOne({_id: req.params.id})       
     .then((book) => {
-        if (book.userId != req.auth.userId) {
-            res.status(401).json({ message : 'Not authorized'});
-        } else {
-        Book.updateOne({_id: req.params.id}, {...modifRate, _id: req.params.id})
-            .then(() => {res.status(200).json({message : 'Note prise en compte'});
-            })
-            .catch((error) => {res.status(401).json({ error });
-            });
+        const found = book.ratings.userId.find(req.auth.userId);
+
+        const add = arr => arr.reduce((a, b) => a + b, 0);        
+        const sum = add(book.ratings.grade);       
+        const modifRate =         
+        ratings.userId.push(req.userId);
+        ratings.grade.push(req.rating);
+        averageRating = sum/ratings.grade.length;
+
+        if (found === req.auth.userId) {
+            res.status(401).json({message : 'Vous ne pouvez pas modifier une évaluation déja saisie'})
         }
-    })      
-    .catch((error) => {
-        res.status(400).json({ error });
-    });
+            if (book.userId === !req.auth.userId) {
+                res.status(401).json({ message : 'Not authorized'});
+            } else {
+            Book.updateOne({_id: req.params.id}, {...modifRate, _id: req.params.id})
+                .then(() => {res.status(200).json({message : 'Note prise en compte'});
+                })
+                .catch((error) => {res.status(401).json({ error });
+                });
+            }
+        })      
+        .catch((error) => {
+            res.status(400).json({ error });
+        });
 };
 
 exports.bestRating=(req, res,next)=>{      
     Book.find()     
-    .then((books) =>  {        
-        const array=[];
-        const arrayMap = array.map(books); 
-        arrayMap.sort(books.averageRating);            
-     res.status(200).json([arrayMap.filter([0],[1],[2])]);
+    .then((books) =>  {           
+    const array=(books).sort((b, a) => a.averageRating - b.averageRating);                   
+     res.status(200).json([array[0], array[1], array[2]]);
     })     
     .catch((error) => {res.status(400).json({ error });
     });
 };
     
-   
+    
 
