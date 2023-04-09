@@ -87,32 +87,37 @@ Book.find()
 
 exports.ratingBook =(req, res, next) => {         
     Book.findOne({_id: req.params.id})       
-    .then((book) => {
-        const found = book.ratings.userId.find(req.auth.userId);
+    .then((book) => {        
+        
+        const found = ratings.userId.find((userId) => userId === req.auth.userId);
+        const add = arr => arr.reduce((a, b) => a + b, 0);   
+      
 
-        const add = arr => arr.reduce((a, b) => a + b, 0);        
-        const sum = add(book.ratings.grade);       
-        const modifRate =         
-        ratings.userId.push(req.userId);
-        ratings.grade.push(req.rating);
-        averageRating = sum/ratings.grade.length;
-
-        if (found === req.auth.userId) {
-            res.status(401).json({message : 'Vous ne pouvez pas modifier une évaluation déja saisie'})
-        }
-            if (book.userId === !req.auth.userId) {
-                res.status(401).json({ message : 'Not authorized'});
-            } else {
-            Book.updateOne({_id: req.params.id}, {...modifRate, _id: req.params.id})
-                .then(() => {res.status(200).json({message : 'Note prise en compte'});
-                })
-                .catch((error) => {res.status(401).json({ error });
-                });
-            }
+      const modifRate = {
+        ...JSON.parse(req.body.book),        
+        ratings :[{
+            userId : ratings.userId.push(req.body.userId),
+            grade : ratings.grade.push(req.body.rating),
+            }],            
+        averageRating: add(ratings.grade)/ratings.grade.length
+      };
+         if (found) {
+                    res.status(401).json({message : 'Vous ne pouvez pas modifier une évaluation déja saisie'})
+                } 
+                else {
+                Book.updateOne({_id: req.params.id}, { 
+                            ...modifRate,
+                            _id: req.params.id, id: req.params.id,
+                            })
+                    .then(() => {res.status(200).json({message : 'Note prise en compte'});
+                    })
+                    .catch((error) => {res.status(401).json({ error });
+                    });
+                }
         })      
-        .catch((error) => {
-            res.status(400).json({ error });
-        });
+    .catch((error) => {
+        res.status(400).json({ error });
+    });
 };
 
 exports.bestRating=(req, res,next)=>{      
