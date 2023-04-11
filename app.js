@@ -6,13 +6,20 @@ const path = require('path');
 require("dotenv").config();
 
 const mongoose = require('mongoose');
-mongoose.connect(process.env.DBLINK, {
-    useNewUrlParser: true,
-     useUnifiedTopology: true,
-   })
-   .then(() => console.log("Connexion à MongoDB réussie !"))
-   .catch((err) => console.log("Connexion à MongoDB échouée !", err));
 
+const connexionMongoose = async() =>{
+try{
+    await mongoose.connect(process.env.DBLINK, {
+      useNewUrlParser: true,
+       useUnifiedTopology: true,
+     });
+     console.log("Connexion à MongoDB réussie !");
+    }
+catch{
+  ((err) => console.log("Connexion à MongoDB échouée !", err));
+    }
+  };
+  connexionMongoose();
 
 const app = express();
 app.use(express.json());
