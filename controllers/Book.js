@@ -127,10 +127,11 @@ exports.ratingBook = async (req, res, next) => {
         book.averageRating = moye;
         await Book.updateOne({ _id: req.params.id }, { ...book._doc });
         console.log(book._doc);
-        res.status(200).json(book);
+        res.status(200).json(book);        
     } catch (error) {
         res.status(400).json({ error });
     }
+    
 };
 
 exports.bestRating = async (req, res, next) => {
