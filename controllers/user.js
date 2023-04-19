@@ -1,23 +1,15 @@
 const bcrypt = require('bcrypt');
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
-const mongoSanitize = require('express-mongo-sanitize');
 require("dotenv").config();
 
 exports.signup  = async (req, res, next) => {         
 try { 
-    //if = Partie à enlever lors de la validation de mongoose unique validator
-    // const userExist = await User.findOne({email:req.body.email})
-    //      if(userExist){
-    //             res.status(400).json({message : 'Email incorrect, merci de modifier votre email'})
-    //         }  
     const user = new User({
         email: req.body.email,
         password: req.body.password,
     });
-    mongoSanitize.sanitize({user}, {
-        allowDots: true
-      });
+    
    user.password =  await bcrypt.hash(req.body.password, 10);               
     const userSaved = await user.save();
     if (userSaved) {     

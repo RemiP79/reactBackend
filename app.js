@@ -1,7 +1,7 @@
 const express = require('express');
 const helmet = require('helmet');
 const rateLimit = require ('express-rate-limit');
-// const mongoSanitize = require('express-mongo-sanitize');
+const mongoSanitize = require('express-mongo-sanitize');
 const bookRoutes = require('./routes/bookRoutes');
 const userRoutes = require ('./routes/userRoutes');
 const path = require('path');
@@ -24,7 +24,12 @@ catch{
   connexionMongoose();
 
 const app = express();
-
+app.use(
+  mongoSanitize({
+    allowDots: true,
+    replaceWith: '_',
+  }),
+);
 //permettre l'Utilisation de helmet qui bloque l'acces aux images
 app.use(
         helmet.contentSecurityPolicy({
@@ -45,7 +50,7 @@ const limiter = rateLimit({
 
 // Apply the rate limiting middleware to all requests
 app.use(limiter);
-//app.use(mongoSanitize());
+
 
 app.use(express.json());
 
@@ -55,7 +60,8 @@ app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
   next();
 });
- 
+
+
  
 app.use('/images', express.static(path.join(__dirname, 'images'))); // mise avant pour indiquer à Express qu'il faut gérer la ressource images de manière statique 
 app.use('/api/books', bookRoutes);
