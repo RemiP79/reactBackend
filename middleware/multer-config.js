@@ -1,11 +1,12 @@
 const multer = require('multer');
 
-const maxSize = 1 * 1024 * 1024 ;
+//const maxSize = 1 * 1024 * 1024 ;
 
 const MIME_TYPES = {
   'image/jpg': 'jpg',
   'image/jpeg': 'jpg',
-  'image/png': 'png'  
+  'image/png': 'png',
+  'image/webp' : 'webp' 
 };
 
 const multerFilter = (req, file, cb) => {
@@ -18,7 +19,7 @@ const multerFilter = (req, file, cb) => {
 
 const storage = multer.diskStorage({
   destination: (req, file, callback) => {
-    callback(null, 'images');
+    callback(null, 'images/');
   },
   filename: (req, file, callback) => {
     const name = file.originalname.split(' ').join('_');
@@ -32,6 +33,6 @@ const storage = multer.diskStorage({
 
 module.exports = multer({
   storage: storage, 
-  limits : maxSize,
+  //limits : maxSize,
   fileFilter : multerFilter,
   }).single('image');

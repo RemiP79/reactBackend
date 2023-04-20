@@ -9,10 +9,10 @@ const router = express.Router();
 router.get('/', bookCtrl.getAllBooks);
 router.get('/bestrating', bookCtrl.bestRating);
 router.post('/:id/rating', auth, bookCtrl.ratingBook); 
-router.put('/:id', auth, multer,sharp.sharpImg, bookCtrl.modifyBook); 
+router.put('/:id', auth, multer, sharp, bookCtrl.modifyBook); 
 router.delete('/:id', auth, bookCtrl.deleteBook);
 router.get('/:id', bookCtrl.getOneBook);
-router.post('/', auth, multer, sharp.sharpImg, bookCtrl.createBook);
+router.post('/', auth, multer, sharp, bookCtrl.createBook);
 
 
 module.exports = router;

@@ -1,19 +1,20 @@
 const sharp = require ('sharp');
+const multer = require ('./multer-config');
+const fs = require ('fs');
+const path = require ('path');
 
-exports.sharpImg = (req,res,next) => {
-    try{    
+module.exports = async (req,res,next) => {
     
-    sharp(`images/${req.file.filename}`)
-            .resize({width: 200,
-                height: 200
-                })
-                
-            .toFile(`images/${req.file.filename}`, (err, info) => {
-                if (err) throw err})
-            }
-            catch (error) {
-              res.status(401).json({ error });
-              }
+      console.log(req.file);  
+        const newName = req.file.filename.split('.')[0];
+        req.file.filename = newName + '.webp';
+
+        await sharp(req.file.path)    
+            .resize(300)                
+            .toFile(path.resolve(req.file.destination, newName + '.webp'));
+        fs.unlinkSync(req.file.path); 
+        next();      
+
     };
 
 // exports.sharpImg = (req,res,next) => {

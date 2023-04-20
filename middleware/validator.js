@@ -1,4 +1,5 @@
 const {check, validationResult} = require ('express-validator');
+//const { options } = require('../routes/userRoutes');
 
 
 exports.checkMail = async (req,res,next) =>{
@@ -9,12 +10,12 @@ exports.checkMail = async (req,res,next) =>{
             .matches('^[a-z0-9][-a-z0-9._]+@([-a-z0-9]+.)+[a-z]{2,5}$').withMessage('ressource matches utilisée')
             .escape().withMessage('ressource escape() utilisée')
             .normalizeEmail().withMessage('ressource normalize utilisée')
-            .isEmail().withMessage('Email non conforme')        
+            .isEmail().withMessage('ressource isEmail utilisée : email non conforme')        
             .run(req);
         next();
     }
     catch (error) {
-        res.status(401).json({ message: 'impossibe de créer/connecter utilisateur' });
+        res.status(401).json({ message: 'email : impossibe de créer/connecter utilisateur' });
     }  
 };
 
@@ -22,12 +23,24 @@ exports.checkPassword = async (req,res,next) =>{
     try{
         await check('password')
             .not().isEmpty().withMessage('Sasir un mot de passe')
-            //.matches('^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{1,}$').withMessage('ressource matches mpd utilisée')
+            .isStrongPassword( {
+                minLength: 8, 
+                minLowercase :1,
+                minUppercase : 1,
+                minNumbers : 1,                                
+                minSymbols: 0,
+                returnScore: false,
+                pointsPerUnique: 0,
+                pointsPerRepeat: 0,
+                pointsForContainingLower: 0,
+                pointsForContainingUpper: 0,
+                pointsForContainingNumber: 0,
+                pointsForContainingSymbol: 0}).withMessage('mdp pas suffisemment fort')
             .run(req);
         next();
     }
     catch (error) {
-        res.status(401).json({ message: 'impossibe de créer/connecter utilisateur' });
+        res.status(401).json({ message: 'pwd : impossibe de créer/connecter utilisateur' });
     }  
 };
 
