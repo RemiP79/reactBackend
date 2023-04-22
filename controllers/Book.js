@@ -1,14 +1,14 @@
 const Book = require('../models/Book');
 const fs = require('fs');
 const jwt = require('jsonwebtoken');
-const sanitize = require('mongo-sanitize')
+//const sanitize = require('mongo-sanitize')
 
 exports.createBook = async (req, res, next) => {
     try {
         const bookObject = JSON.parse(req.body.book);
-        const sanitizeBook = sanitize(bookObject);
+        
         const book = new Book({
-            ...sanitizeBook,
+            ...bookObject,
             userId: req.auth.userId,
             imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
         });

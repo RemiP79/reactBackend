@@ -3,19 +3,24 @@ const multer = require ('./multer-config');
 const fs = require ('fs');
 const path = require ('path');
 
-module.exports = async (req,res,next) => {
+let oldFileName = '';
+
+module.exports = async (req,res,next) => {    
+  if(req.file && req.file.filename !== oldFileName) { // Vérifie si le fichier a été modifié
+    console.log(req.file);  
+    const newName = req.file.filename.split('.')[0];
+    req.file.filename = newName + '.webp';
+
+    await sharp(req.file.path)    
+        .resize(300)                
+        .toFile(path.resolve(req.file.destination, newName + '.webp'));
+    fs.unlinkSync(req.file.path);
     
-      console.log(req.file);  
-        const newName = req.file.filename.split('.')[0];
-        req.file.filename = newName + '.webp';
-
-        await sharp(req.file.path)    
-            .resize(300)                
-            .toFile(path.resolve(req.file.destination, newName + '.webp'));
-        fs.unlinkSync(req.file.path); 
-        next();      
-
-    };
+    oldFileName = req.file.filename; // Met à jour le nom de fichier
+  }
+  
+  next();
+};
 
 // exports.sharpImg = (req,res,next) => {
 // //const imagePath = req.file.filename;

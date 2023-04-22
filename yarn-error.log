@@ -1,5 +1,5 @@
 Arguments: 
-  C:\Program Files\nodejs\node.exe C:\Users\remre\AppData\Roaming\npm\node_modules\yarn\bin\yarn.js add mongoose-unique-validator
+  C:\Program Files\nodejs\node.exe C:\Users\remre\AppData\Roaming\npm\node_modules\yarn\bin\yarn.js add mongo-sanitize
 
 PATH: 
   C:\Python311\Scripts\;C:\Python311\;C:\Program Files (x86)\ActiveState Komodo Edit 12\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\Intel\WiFi\bin\;C:\Program Files\Common Files\Intel\WirelessCommon\;C:\Program Files\Inkscape\bin;C:\Program Files (x86)\dotnet\;C:\Program Files\nodejs\;C:\ProgramData\chocolatey\bin;C:\Users\remre\AppData\Local\ActiveState\StateTool\release\bin;C:\Users\remre\AppData\Local\Microsoft\WindowsApps;C:\Users\remre\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\remre\AppData\Local\Programs\Git\cmd;C:\Users\remre\AppData\Roaming\npm
@@ -37,7 +37,9 @@ npm manifest:
       "helmet": "^6.1.5",
       "jsonwebtoken": "^9.0.0",
       "mongoose": "^7.0.3",
-      "multer": "^1.4.5-lts.1"
+      "mongoose-unique-validator": "^4.0.0",
+      "multer": "^1.4.5-lts.1",
+      "sharp": "^0.32.0"
     }
   }
 

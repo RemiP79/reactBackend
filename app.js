@@ -34,15 +34,10 @@ app.use(
     }})        
 );
 
-app.use(function(req, res, next) {
-  req.body = sanitize(req.body);
-  req.query = sanitize(req.query);
-  req.params = sanitize(req.params);
-  next();
-});
-
 
 app.use(express.json());
+
+app.use(sanitize());
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
