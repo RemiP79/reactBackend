@@ -1,6 +1,4 @@
 const {check, validationResult} = require ('express-validator');
-//const { options } = require('../routes/userRoutes');
-
 
 exports.checkMail = async (req,res,next) =>{
     try{ 
@@ -43,7 +41,6 @@ exports.checkPassword = async (req,res,next) =>{
         res.status(401).json({ message: 'pwd : impossibe de créer/connecter utilisateur' });
     }  
 };
-
 
 exports.fonctionValider = async (req, res, next) => {
     try{

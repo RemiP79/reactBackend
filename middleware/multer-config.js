@@ -1,7 +1,6 @@
 const multer = require('multer');
 
-//const maxSize = 1 * 1024 * 1024 ;
-
+//Indiquer quels formats sont acceptés
 const MIME_TYPES = {
   'image/jpg': 'jpg',
   'image/jpeg': 'jpg',
@@ -9,14 +8,16 @@ const MIME_TYPES = {
   'image/webp' : 'webp' 
 };
 
+//Vérifier que le fichiers soit bien une image
 const multerFilter = (req, file, cb) => {
-      if(file.mimetype.startsWith('image')) {
-          cb(null, true);
-      } else {
-          cb({ message: 'Le fichier selectionné n\'est pas une image'}, false);
-      }
-  };
+    if(file.mimetype.startsWith('image')) {
+        cb(null, true);
+    } else {
+        cb({ message: 'Le fichier selectionné n\'est pas une image'}, false);
+    }
+};
 
+// Où stocker l'image et sous quel nom
 const storage = multer.diskStorage({
   destination: (req, file, callback) => {
     callback(null, 'images/');
@@ -27,12 +28,11 @@ const storage = multer.diskStorage({
     namepop.pop();
     const namePoint = namepop.join('.');
     const extension = MIME_TYPES[file.mimetype];
-    callback(null, namePoint + Date.now() + '.' + extension);
+    callback(null, Date.now() +'_' + namePoint +  '.' + extension);
   }
 });
 
 module.exports = multer({
-  storage: storage, 
-  //limits : maxSize,
+  storage: storage,   
   fileFilter : multerFilter,
   }).single('image');

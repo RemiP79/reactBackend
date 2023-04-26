@@ -1,6 +1,8 @@
-const http = require('http');
+const http = require('http'); // objet http = permet de créer un serveur
 const app = require('./app');
 
+// normilize renvoie un port valide,
+// qu'il soit fourni sous la forme d'un numéro ou d'une chaîne ;
 const normalizePort = val => {
   const port = parseInt(val, 10);
 
@@ -13,8 +15,11 @@ const normalizePort = val => {
   return false;
 };
 const port = normalizePort(process.env.PORT || '3000');
-app.set('port', port);
+app.set('port', port);  //dire à l'application express sur quel port elle doit tourner
 
+
+// errorHandler recherche les différentes erreurs et les gère de manière appropriée.
+// Elle est ensuite enregistrée dans le serveur ;
 const errorHandler = error => {
   if (error.syscall !== 'listen') {
     throw error;
@@ -35,7 +40,7 @@ const errorHandler = error => {
   }
 };
 
-const server = http.createServer(app);
+const server = http.createServer(app); //Le serveur doit se baser sur app.js
 
 server.on('error', errorHandler);
 server.on('listening', () => {
@@ -44,4 +49,4 @@ server.on('listening', () => {
   console.log('Listening on ' + bind);
 });
 
-server.listen(port);
+server.listen(port); //indique au serveur quel port écouter

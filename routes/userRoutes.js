@@ -1,12 +1,12 @@
 const express = require('express');
-const validator = require('../middleware/validator');
+const {checkMail,checkPassword,fonctionValider } = require('../middleware/validator');
 const router = express.Router();
 const userCtrl = require('../controllers/user');
 const rateLimit = require ('express-rate-limit');
 
 const limiter = rateLimit({
-    windowMs: 3 * 60 * 1000, // 15 minutes
-    max: 50, // Limit each IP to 4 requests per `window` (here, per 15 minutes)
+    windowMs: 3 * 60 * 1000, // 3 minutes
+    max: 5, // Limite 5 requêtes pour 3 minutes
     message:
       'Too many accounts created from this IP, please try again after 3 minutes',
     standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
@@ -14,16 +14,16 @@ const limiter = rateLimit({
 })
 
 router.post('/signup',
-        [validator.checkMail,
-        validator.checkPassword],
-        validator.fonctionValider,
+        checkMail,
+        checkPassword,
+        fonctionValider,
         userCtrl.signup);
 
 router.post('/login',
         limiter,
-        [validator.checkMail,
-        validator.checkPassword],
-        validator.fonctionValider,
+        checkMail,
+        checkPassword,
+        fonctionValider,
         userCtrl.login);
 
 module.exports = router;

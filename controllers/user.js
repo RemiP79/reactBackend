@@ -10,7 +10,7 @@ try {
         password: req.body.password,
     });
     
-   user.password =  await bcrypt.hash(req.body.password, 10);               
+   user.password =  await bcrypt.hash(req.body.password, 10);  //Hachage mdp utilisateur           
     const userSaved = await user.save();
     if (userSaved) {     
         res.status(201).json({ message: 'Utilisateur créé avec succès !' });                                           
@@ -25,20 +25,20 @@ catch (error) {
 
 exports.login = async (req, res, next) => {
     try {
+        //Verification des informations d'identification (findOne et compare bcrypt)
         const user = await User.findOne({ email: req.body.email });
         if (!user) {
-            res.status(401).json({ error: 'Utilisateur non trouvé !' });
+           return res.status(401).json({ error: 'Utilisateur non trouvé !' });
         }
-
-        const valid = await bcrypt.compare(req.body.password, user.password);
+        const valid = await bcrypt.compare(req.body.password, user.password); //RP bcrypt compare le mdp saisi/haché et le mdp stocké/haché dans BDD
         if (!valid) {
-            res.status(401).json({ error: 'Mot de passe incorrect !' });
+            return res.status(401).json({ error: 'Mot de passe incorrect !' });
         }
         res.status(200).json({
-            userId: user._id,
-            token: jwt.sign(
-                { userId: user._id },
-                process.env.TOKEN_KEY,
+            userId: user._id,   
+            token: jwt.sign( // methode sign pour chiffrer un nouveau token.
+                { userId: user._id }, //renvoyer l'id de l'utilisateur depuis la base de donnée
+                process.env.TOKEN_KEY, //renvoie token web
                 { expiresIn: '24h' }
             )
         });
