@@ -9,9 +9,9 @@ require("dotenv").config();
 //Connection à mongoDB
 const mongoose = require('mongoose');
 
-const connexionMongoose = async() =>{
+const connexionMongoose = () =>{
   try{
-      await mongoose.connect(process.env.DBLINK, {
+      mongoose.connect(process.env.DBLINK, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
       });
@@ -25,7 +25,6 @@ const connexionMongoose = async() =>{
 
 
 const app = express();
-
   
 //permettre l'Utilisation de helmet qui bloque l'acces aux images
 app.use(

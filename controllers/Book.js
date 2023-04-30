@@ -25,25 +25,30 @@ exports.getOneBook = async (req, res, next) => {
         }
         return res.status(200).json(book);
     } catch (error) {
-        res.status(500).json({ error });
+        res.status(400).json({ error });
     }
 };
  
 exports.modifyBook = async (req, res, next) => {
     try {
+        const book = await Book.findOne({ _id: req.params.id });  
+        if (!book) {
+            return res.status(404).json({ error: 'Book not found' });
+        } 
+        if (book.userId !== req.auth.userId) {
+        return res.status(401).json({ message: 'Not authorized' });  
+        }
+       
+        //Si une image est récupérée l'imageUrl est mise à jour (ternaire)
       const bookObject = req.file
         ? {
             ...JSON.parse(req.body.book),
             imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
           }
         : { ...req.body };  
-      const book = await Book.findOne({ _id: req.params.id });  
-      if (!book) {
-            return res.status(404).json({ error: 'Book not found' });
-      }  
-      if (book.userId !== req.auth.userId) {
-            return res.status(401).json({ message: 'Not authorized' });
-      }  
+      
+       
+        
       
       await Book.updateOne(
         {_id: req.params.id },
@@ -95,19 +100,24 @@ exports.ratingBook = async (req, res, next) => {
     try {
         const book = await Book.findOne({ _id: req.params.id });        
         
+        //L'utilisateur ne peut pas modifier sa note
         const found = book.ratings.find((r) => r.userId === req.auth.userId);
         if (found) {
             return res.status(401).json({ message: 'Vous ne pouvez pas modifier une évaluation déjà saisie' });
         }
         let tot = 0;
+        //Ajout de la note et userId dans le tableau ratings
         book.ratings.push({
             userId: req.auth.userId,
             grade: req.body.rating,
         });
+        //Calcul de la moyenne des notes
         book.ratings.forEach((elt) => {
             tot+=elt.grade;            
         });
         const moyenne = Math.round((tot/book.ratings.length)*100)/100;        
+       
+        //Mise à jour de la moyenne des notes
         book.averageRating = moyenne;
         await Book.updateOne({ _id: req.params.id }, { ...book._doc });
         console.log(book._doc);
@@ -120,8 +130,10 @@ exports.ratingBook = async (req, res, next) => {
 exports.bestRating = async (req, res, next) => {
     try {
         const books = await Book.find();
+        //classement des livres selon averageRating
         const array = books.sort((a, b) => a.averageRating - b.averageRating);
         const tableau = array.reverse();
+       //Affichage des trois premiers livres du tableau
         res.status(200).json(tableau.slice(0,3));
     } catch (error) {
         res.status(400).json({ error });
